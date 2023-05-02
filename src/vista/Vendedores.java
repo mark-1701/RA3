@@ -581,7 +581,6 @@ public class Vendedores extends javax.swing.JFrame {
                         producto.setCantidad(cantidad);
                         listaProductos.add(producto);
                     }
-                    System.out.println(listaProductos.toString());
 
                     //CREAR TABLA
                     DefaultTableModel tabla = (DefaultTableModel) jTableProductos.getModel();
