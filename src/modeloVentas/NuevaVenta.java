@@ -9,7 +9,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.*;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
@@ -22,9 +21,7 @@ public class NuevaVenta {
     Connection con;
     PreparedStatement ps;
     ResultSet rs;
-    LinkedList<DetalleFactura> listaDetalleFactura = new LinkedList<DetalleFactura>();
-    Factura factura = new Factura();
-
+    
     public int generarCodigoFactura() {
         String sql = "SELECT MAX(no_factura) FROM facturas;";
         try {
@@ -150,6 +147,8 @@ public class NuevaVenta {
     public void solicitarFactura(int noFactura) {
         String query1 = "SELECT * FROM informacion_facturas WHERE no_factura = ?;";
         String query2 = "SELECT * FROM informacion_detalle_facturas WHERE no_factura = ?;";
+        Factura factura = new Factura();
+        LinkedList<DetalleFactura> listaDetalleFactura = new LinkedList<DetalleFactura>();
         boolean encontrado = false;
         try {
             con = cn.Conectar();
@@ -178,7 +177,7 @@ public class NuevaVenta {
                     detalleFactura.setSubTotal(rs.getFloat(6));
                     listaDetalleFactura.add(detalleFactura);
                 }
-                generarPDFFactura();
+                generarPDFFactura(factura, listaDetalleFactura);
             } else {
                 JOptionPane.showMessageDialog(null, "El no de la factura no fue encontrado", "Alerta", JOptionPane.WARNING_MESSAGE);
             }
@@ -189,7 +188,7 @@ public class NuevaVenta {
 
     }
 
-    public void generarPDFFactura() throws FileNotFoundException, FileNotFoundException, DocumentException {
+    public void generarPDFFactura(Factura factura, LinkedList<DetalleFactura> listaDetalleFactura) throws FileNotFoundException, FileNotFoundException, DocumentException {
         FileOutputStream gen = new FileOutputStream("factura.pdf");
         Document documento = new Document();
         PdfWriter.getInstance(documento, gen);
